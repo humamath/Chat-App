@@ -6,7 +6,7 @@ function App() {
   return (
     <div className='App'>
     
-    <Route path='/' component = {} />
+    {/*<Route path='/' component = {} />*/}
 
 
     </div>
