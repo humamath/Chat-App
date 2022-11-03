@@ -1,5 +1,5 @@
 const asyncHandler  = require('express-async-handler');
-const user = require('../models/userModal');
+const User = require('../models/userModal');
 const generateToken = require('../config/generateToken');
 
 
@@ -12,13 +12,13 @@ const registeruser = asyncHandler(async(req,res) =>{
         throw new Error("Enter All the fields");
     }
 
-    const userExists = await user.findOne({email})
+    const userExists = await User.findOne({email})
     if(userExists){
         res.status(400);
         throw new Error("User Already Present");
     }
 
-    const user = await user.create({
+    const user = await User.create({
         name,email,password,pic,
     })
 
@@ -32,9 +32,31 @@ const registeruser = asyncHandler(async(req,res) =>{
         })
     }else{
         res.status(400);
-        throw new error("User Creation failed")
+        throw new error("User Creation failed");
     }
 
 });
 
-module.exports = registeruser;
+const authUser = asyncHandler(async(req,res)=>{
+    const {email,password} = req.body;
+
+    const user = await User.findOne({email});
+
+    if(user && (await user.matchPassword(password))){
+        res.status(201).json({
+            _id : user._id,
+            name : user.name,
+            email : user.email,
+            pic :user.pic,
+            token:generateToken(user._id),
+        })
+    }
+    else{
+        res.status(400);
+        throw new error("User NOT found");
+    }
+
+});
+
+
+module.exports = { registeruser, authUser };

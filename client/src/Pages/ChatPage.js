@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useEffect , useState } from 'react';
 
-const url = 'http://localhost:3000';
+const url = 'http://localhost:5000';
 
 
 const ChatPage = () => {

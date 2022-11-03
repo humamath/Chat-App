@@ -2,26 +2,130 @@ import { FormControl, FormLabel, VStack } from '@chakra-ui/react'
 import { useState, React } from 'react'
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { Button } from "@chakra-ui/button";
+import { useToast } from '@chakra-ui/react'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+// const url = 'http://localhost:5000';
 
 
 const Signup = () => {
 
   const [show, setshow] = useState(false);
-  const [Name, setName] = useState();
+  const toast = useToast()
+  const history = useNavigate()
+  const handleClick = ()=> setshow(!show);
+
+  const [name, setname] = useState();
   const [email, setemail] = useState();
   const [password, setpassword] = useState();
   const [confirmPassword, setconfirmPassword] = useState();  
   const [pic, setpic] = useState()
+  const [loading, setloading] = useState(false)
+  
 
-  const handleClick = ()=> setshow(!show);
+  const submitHandler = async()=>{
+    setloading(true);
+    if(!name || !email|| !password || !confirmPassword){
+      toast({
+        title: 'Fill all Fields',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position:"bottom",
+      });
+      setloading(false);
+      return;
+    }
+    if(password !== confirmPassword){
+      toast({
+        title: 'Paswords Donot match',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position:"bottom",
+      });
+      return;
+    }
+    console.log(name,email,password,pic);
+    try{
+      const config = {
+       "name":name,
+       "email":email,
+       "password":password,
+       "pic" : pic,
+      }
+      console.log(config);
+
+      const data = await axios.post("/api/user",config);
+      console.log(data);
+      toast({
+        title: 'Registration Success',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position:"bottom",
+      });
+
+      localStorage.setItem('userInfo',JSON.stringify(data));
+      setloading(false);
+      history('/chats');
+    }catch(error){
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setloading(false);
+    }
+  }
 
   const postDetails = (pics) =>{
-
-  }
-
-  const submitHandler = ()=>{
-
-  }
+    setloading(true);
+    if(pics===undefined){
+     toast({
+       title: 'Select an Image',
+       status: 'warning',
+       duration: 5000,
+       isClosable: true,
+       position:"bottom",
+     });
+     return;
+    }
+    console.log(pics)
+    if(pics.type === "image/jpeg" || pics.type ==="image/png"){
+     const data = new FormData();
+     data.append("file",pics);
+     data.append("upload_preset","Chatter");
+     data.append("cloud_name",'dqfk1qfyl');
+     fetch("https://api.cloudinary.com/v1_1/dqfk1qfyl/image/upload/",{
+        method:"post",
+        body:data,
+     }).then((res)=>res.json())
+     .then(data =>{
+       setpic(data.url.toString());
+       console.log(data.url.toString());
+       setloading(false);
+     })
+     .catch((err)=>{
+       console.log(err);
+       setloading(false);
+     })
+    }
+    else{
+     toast({
+       title: 'Select an Image',
+       status: 'warning',
+       duration: 5000,
+       isClosable: true,
+       position:"bottom",
+     });
+     return;
+    }
+ }
 
   return (
     <VStack spacing={'5px'}>
@@ -29,7 +133,7 @@ const Signup = () => {
       <FormLabel>Name</FormLabel>
       <Input 
       placeholder='Enter Your Name'
-      onChange={(e)=>setName(e.target.value)}
+      onChange={(e)=>setname(e.target.value)}
       size = 'md'
       />
     </FormControl>
@@ -78,7 +182,7 @@ const Signup = () => {
         <Input
         type = 'file'
         p='1.5'
-        accept='image/'
+        accept='image/*'
         onChange={(e)=>postDetails(e.target.files[0])}/>
       </FormControl>
       <Button
@@ -86,7 +190,9 @@ const Signup = () => {
       width='100%'
       style={{marginTop:'15px'}}
       borderRadius={'20px'}
-      onClick = {submitHandler}> Sign Up
+      onClick = {submitHandler}
+      isLoading = {loading}>
+       Sign Up
       </Button>
 
     </VStack>
