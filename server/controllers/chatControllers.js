@@ -5,6 +5,7 @@ const User = require('../models/userModal');
 
 const accessChat = asyncHandler(async (req,res)=>{
     const { userId } = req.body;
+   // console.log(req.body);
 
     if(!userId){
         console.log("UserId param not sent with request");
@@ -50,6 +51,7 @@ const accessChat = asyncHandler(async (req,res)=>{
 });
 
 const fetchChats = asyncHandler(async(req,res)=>{
+  console.log(req.body);
       try{
          Chat.find({users : {$elemMatch: {$eq: req.user._id}}})
          .populate("users", "-password")
