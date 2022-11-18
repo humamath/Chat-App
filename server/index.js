@@ -5,12 +5,14 @@ const dotenv = require("dotenv");
 const connectDB = require('./config/db') 
 const userRoutes = require('./Routes/userRoutes')
 const chatRoutes = require('./Routes/chatRoutes')
+const cors = require('cors');
 
 const { notFound, errorHandler } = require('./middleware/errorMiddleware')
 
 dotenv.config();
 connectDB();
 
+app.use(cors());
 app.use(express.json()); //to accept JSON
 
 app.get('/',(req,res)=>{

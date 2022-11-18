@@ -12,26 +12,36 @@ import { ChatState } from "../Context/chatProvider";
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
 
-  const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+  const { selectedchat, setselectedchat, user, chats, setchats } = ChatState();
 
   const toast = useToast();
 
   const fetchChats = async () => {
-    // console.log(user._id);
+     console.log(user.data._id);
+     console.log(user.data.token);
     try {
       const config = {
         headers: {
-         // "Content-type": "application/json",
-          Authorization: `Bearer ${user.data.token}`,
+          'Content-Type' : 'application/json',
+          'Accept' : 'application/json',
+          'Authorization': `Bearer ${user.data.token}`,
         },
       };
       const body = {
         "userId" : `${user.data._id}`
       }
-      const { data } = await axios.get("/api/chat", body , config);
+      const url = "https://localhost:5000";
+      const { data } = await axios({
+         method: 'get',
+         url: `/api/chat`,
+         params : body,
+         headers : {'Authorization': 'Bearer '+ user.data.token}
+      });
+
       console.log(data);
-      setChats(data);
+      setchats(data);
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error Occured!",
         description: "Failed to Load the chats",
@@ -51,7 +61,7 @@ const MyChats = ({ fetchAgain }) => {
 
   return (
     <Box
-      d={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      d={{ base: selectedchat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
       p={3}
@@ -97,10 +107,10 @@ const MyChats = ({ fetchAgain }) => {
           <Stack overflowY="scroll">
             {chats.map((chat) => (
               <Box
-                onClick={() => setSelectedChat(chat)}
+                onClick={() => setselectedchat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={selectedchat === chat ? "#38B2AC" : "#E8E8E8"}
+                color={selectedchat === chat ? "white" : "black"}
                 px={3}
                 py={2}
                 borderRadius="lg"

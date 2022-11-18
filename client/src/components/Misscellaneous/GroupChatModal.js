@@ -28,7 +28,7 @@ import {
     const [loading, setLoading] = useState(false);
     const toast = useToast();
   
-    const { user, chats, setChats } = ChatState();
+    const { user, chats, setchats } = ChatState();
   
     const handleGroup = (userToAdd) => {
       if (selectedUsers.includes(userToAdd)) {
@@ -104,7 +104,7 @@ import {
           },
           config
         );
-        setChats([data, ...chats]);
+        setchats([data, ...chats]);
         onClose();
         toast({
           title: "New Group Chat Created!",

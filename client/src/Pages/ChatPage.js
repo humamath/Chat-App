@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useEffect , useState } from 'react';
 import { ChatState } from '../Context/chatProvider';
-import { Box } from '@chakra-ui/react';
+import { Box, HStack } from '@chakra-ui/react';
 import SideDrawer from '../components/Misscellaneous/SideDrawer'
 import MyChats from '../components/MyChats'
 import ChatBox from '../components/chatBox'
@@ -24,8 +24,10 @@ const ChatPage = () => {
       justifyContent={'space-between'}
       w="100%" h="91.5vh" p="10px"
      >
-        {user && <MyChats/>}
-        {/*user && <ChatBox/>*/}
+     <HStack h='100%'>
+      {user && <MyChats/>}
+      {user && <ChatBox/>}
+      </HStack>
      </Box>
 
 

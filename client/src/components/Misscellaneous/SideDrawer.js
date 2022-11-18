@@ -38,12 +38,13 @@ const SideDrawer = () => {
   const [loadingChat, setLoadingChat] = useState(false);
 
   const { 
-    setSelectedChat,
+    setselectedchat,
     user,
+    setuser,
     notification,
     setNotification,
     chats,
-    setChats,} = ChatState();
+    setchats,} = ChatState();
 
   
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,7 +76,7 @@ const SideDrawer = () => {
 
       const { data } = await axios.get(`/api/user?search=${search}`, config);
 
-      //setSelectedChat(data);
+      setselectedchat(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -106,9 +107,9 @@ const SideDrawer = () => {
       }
       const { data } = await axios.post('/api/chat', body , config);
 
-      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      if (!chats.find((c) => c._id === data._id)) setchats([data, ...chats]);
      
-      setSelectedChat(data);
+      setselectedchat(data);
       setLoadingChat(false);
       onClose();
     } catch (error) {
