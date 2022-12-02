@@ -34,7 +34,7 @@ const HomePage = () => {
     p ={3}
     w = '100%'
     m = "40px 0 15px 0"
-    bg={'rgb(254,188,73)'}
+    bg={'linear-gradient(to left, #fdc830, #f37335)'}
     borderRadius= '50px'
     borderWidth='1px'>
     <Text

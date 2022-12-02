@@ -2,24 +2,15 @@ import React from 'react'
 import { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { ChatState } from '../Context/chatProvider'
-import { Box, FormControl, Input, Spinner, Text, useToast} from "@chakra-ui/react";
+import { Box, FormControl, Input, SimpleGrid, Spinner, Text, useToast} from "@chakra-ui/react";
 import { IconButton } from '@chakra-ui/button'
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {getSender , getSenderDetails} from '.././config/ChatLogics'
-import ChatScroll from '../components/ChatScroll';
 import ProfileModal from './Misscellaneous/ProfileModal'
 import { UpdateGroupChatModal } from './Misscellaneous/UpdateGroupChatModal.js'
 import { set } from 'mongoose';
 import './styles.css'
-import {
-  isSameSender ,
-  isLastMessage,
-  isSameSenderMargin,
-  isSameUser}
-   from '../config/ChatLogics'
-   import { Avatar } from "@chakra-ui/avatar";
-   import { Tooltip } from '@chakra-ui/react'
-
+import  ChatScroll from '../components/ChatScroll'
 
 
 const SingleChat = ({fetchAgain,setFetchAgain}) => {
@@ -115,12 +106,13 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
             />
            {!selectedchat.isGroupChat ? (
                 <>
-                {getSender(user,selectedchat.users)}
+                {/*getSender(user,selectedchat.users)*/}
                 {/*<ProfileModal user = {getSenderDetails(user,selectedchat.users)}/>*/}
                 </>
            ):(
             <>
 
+            
             {selectedchat.chatName.toUpperCase()}
            
             </>
@@ -139,8 +131,7 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
           >
           <Box
           height={'500px'}
-          overflowY={"scroll"}
-          >
+          overflowY={"scroll"}>
           {loading ? (
             <Spinner
             alignContent={'center'}
@@ -153,14 +144,9 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
             />
           ):(
             <div className='messages'>
-            {/*Messages*
-            {messages && messages.map((m) => {
-              <div>
-              <Text>dfghj</Text>
-              <Text>{m.sender.name} {m.content}</Text>
-              </div>
-            })*/}
-            <ChatScroll messages = {messages}/>
+            {/*Messages*/}
+            
+           {/* <ChatScroll messages = {messages}/>*/}
             </div>
           )}
           </Box>

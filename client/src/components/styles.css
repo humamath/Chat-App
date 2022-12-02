@@ -1,0 +1,7 @@
+.messages{
+    display: flex;
+    /* min-height: '1000px'; */
+    flex-direction: column;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}

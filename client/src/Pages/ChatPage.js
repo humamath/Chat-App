@@ -14,7 +14,7 @@ const url = 'http://localhost:5000';
 const ChatPage = () => {
  
   const { user } = ChatState();
- 
+  const [fetchAgain, setfetchAgain] = useState(false)
 
   return (
     <div style={{ width: "100%" }}>

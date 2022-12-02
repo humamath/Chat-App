@@ -76,7 +76,6 @@ const SideDrawer = () => {
 
       const { data } = await axios.get(`/api/user?search=${search}`, config);
 
-      setselectedchat(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -154,7 +153,7 @@ const SideDrawer = () => {
     p ={3}
     w = '50%'
     m = "40px 0 50px 0"
-    bg={'rgb(254,188,73)'}
+    bg={'linear-gradient(to right, #fdc830, #f37335)'}
     borderRadius= '50px'
     borderWidth='1px'
     textAlign={'center'}>
