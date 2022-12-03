@@ -31,8 +31,52 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT,console.log(`server is up and running on ${PORT}`));
 
-const io  = require(socket.io)(server,{
+const io  = require("socket.io")(server,{
     cors:{
-        origin:"http://localhost:3000/"
+        origin:"*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
     }
+})
+
+io.on("connection",(socket) =>{
+    console.log("connected to socket.io");
+
+    socket.on('setup',(userData) =>{
+        //console.log(userData);
+        socket.join(userData._id);
+        socket.emit("connected");
+    })
+
+    socket.on("join_chat",(room)=>{
+       socket.join(room);
+       console.log("user joined " + room);
+    }) 
+
+
+    socket.on('typing',(room)=>{
+        socket.in(room).emit("typing")
+    })
+
+    socket.on('stop typing',(room)=>{
+        socket.in(room).emit("stop typing")
+    })
+
+    socket.on("new_msg",(newMessage)=>{
+        var chat = newMessage.chat;
+        //console.log(chat);
+        if(!chat.users){
+            return console.log("chat users not defined");
+        }
+        chat.users.forEach(user => {
+            if(user._id == newMessage.sender._id){
+                return;
+            }
+            socket.in(user._id).emit("message Recieved", newMessage);
+        });
+    })
+
+
+
 })

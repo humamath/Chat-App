@@ -22,6 +22,8 @@ import { Spinner } from "@chakra-ui/spinner";
 import { useToast } from "@chakra-ui/toast";
 import  ChatLoading  from '../ChatLoading';
 import UserListItem from '../userAvatar/userListItem';
+import { getSender } from '../../config/ChatLogics';
+import NotificationBadge from 'react-notification-badge'
 
 
 
@@ -40,7 +42,6 @@ const SideDrawer = () => {
   const { 
     setselectedchat,
     user,
-    setuser,
     notification,
     setNotification,
     chats,
@@ -172,6 +173,20 @@ const SideDrawer = () => {
         <MenuButton p={1}>
           <BellIcon fontSize="2xl" m={1}/>
         </MenuButton>
+        <NotificationBadge
+        
+        />
+        <MenuList pl={2}>{!notification.length && "No new msg"}
+          {notification.map((notif)=>(
+           <MenuItem key = {notif._id} onClick={()=>{
+            setselectedchat(notif.chat);
+            setNotification(notification.filter((n)=>n !== notif))
+           }}>
+           {notif.chat.isGroupChat ? `New Message in ${notif.chat.chatName}`
+          :`New Message from ${getSender(user,notif.chat.users)}`}
+           </MenuItem>
+          ))}
+        </MenuList>
       </Menu>
       <Menu>
         <MenuButton as={Button} rightIcon={<ChevronDownIcon/>}>

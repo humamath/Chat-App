@@ -5,33 +5,43 @@ import { ChatState } from '../Context/chatProvider'
 import { Box, FormControl, Input, Spinner, Text, useToast} from "@chakra-ui/react";
 import { IconButton } from '@chakra-ui/button'
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import {getSender , getSenderDetails} from '.././config/ChatLogics'
+import {getSender} from '.././config/ChatLogics'
 import ChatScroll from '../components/ChatScroll';
-import ProfileModal from './Misscellaneous/ProfileModal'
-import { UpdateGroupChatModal } from './Misscellaneous/UpdateGroupChatModal.js'
-import { set } from 'mongoose';
 import './styles.css'
-import {
-  isSameSender ,
-  isLastMessage,
-  isSameSenderMargin,
-  isSameUser}
-   from '../config/ChatLogics'
-   import { Avatar } from "@chakra-ui/avatar";
-   import { Tooltip } from '@chakra-ui/react'
+import io from "socket.io-client";
 
+
+const ENDPOINT = "http://localhost:5000/"; 
+var socket, selectedChatCompare;
 
 
 const SingleChat = ({fetchAgain,setFetchAgain}) => {
   
-  const { user, selectedchat, setselectedchat } = ChatState();
+  const { user, selectedchat, setselectedchat, notification,
+    setNotification } = ChatState();
   const [messages, setmessages] = useState([]);
   const [loading, setloading] = useState(false);
   const [newMessage,setnewMessage] = useState("");
   const toast = useToast();
+  const [socketConnected, setsocketConnected] = useState(false)
+  //const [typing, settyping] = useState(false)
+  //const [istyping, setistyping] = useState(false)
+
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup",user.data);
+    socket.on('connected',()=>{
+      setsocketConnected(true);
+    })
+    //socket.on('typing',()=>setistyping(true));
+    //socket.on('stop typing',()=>setistyping(false));
+
+  }, []);
 
   const sendMessage = async (event) =>{
     if(event.key == 'Enter' && newMessage){
+      //socket.emit('stop typing',selectedchat._id);
       try{
         const body = {
           chatId : selectedchat._id,
@@ -44,7 +54,8 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
            params : body,
            headers : {'Authorization': 'Bearer '+ user.data.token}
         });
-        console.log(data);
+       // console.log(data);
+        socket.emit("new_msg",data);
         setmessages([...messages,data]);
       }catch(error){
         toast({
@@ -71,7 +82,9 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
       });
       setmessages(data);
       setloading(false);
-      console.log(data);
+
+      socket.emit("join_chat",selectedchat._id);
+      //console.log(data);
     }catch(error){
       toast({
         title: "Error Occured!",
@@ -86,11 +99,41 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
   
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedchat;
   }, [selectedchat])
+  
+  useEffect(() => {
+    socket.on("message Recieved",(newMessage)=>{
+      if(!selectedChatCompare || selectedChatCompare._id !== newMessage.chat._id){
+
+        if(!notification.includes(newMessage)){
+          setNotification([newMessage,...notification])
+          setFetchAgain(!fetchAgain)
+        }
+      }else{
+        setmessages([...messages,newMessage]);
+      }
+    })  
+  })
   
 
   const typingHandler = (e)=>{
     setnewMessage(e.target.value);
+    // if(!socketConnected) return;
+    // if(!typing){
+    //   settyping(true);
+    //   socket.emit('typing',selectedchat._id);
+    // }
+    // let lastTypingTime = new Date().getTime()
+    // var timerLength = 3000;
+    // setTimeout(()=>{
+    //   var timeNow = new Date().getTime();
+    //   var timeDiff = timeNow - lastTypingTime;
+    //   if(timeDiff >= timerLength && typing){
+    //     socket.emit('stop typing',selectedchat._id);
+    //     setistyping(false);
+    //   }
+    // },timerLength)
   }
 
     return (
@@ -153,13 +196,6 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
             />
           ):(
             <div className='messages'>
-            {/*Messages*
-            {messages && messages.map((m) => {
-              <div>
-              <Text>dfghj</Text>
-              <Text>{m.sender.name} {m.content}</Text>
-              </div>
-            })*/}
             <ChatScroll messages = {messages}/>
             </div>
           )}

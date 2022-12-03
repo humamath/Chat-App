@@ -15,7 +15,7 @@ export const getSender = (loggedUser, users) => {
          messages[i+1].sender._id === undefined ) &&
          messages[i].sender._id !== userId
    );
-   console.log(ans);
+   //console.log(ans);
    return ans;
  } ;
 
