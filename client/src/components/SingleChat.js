@@ -2,10 +2,11 @@ import React from 'react'
 import { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { ChatState } from '../Context/chatProvider'
-import { Box, FormControl, Input, Spinner, Text, useToast} from "@chakra-ui/react";
+import { Box, FormControl, Input, Spinner, Text, useToast, Wrap, WrapItem} from "@chakra-ui/react";
 import { IconButton } from '@chakra-ui/button'
+import { Avatar} from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import {getSender} from '.././config/ChatLogics'
+import {getSender, getSenderPic} from '.././config/ChatLogics'
 import ChatScroll from '../components/ChatScroll';
 import './styles.css'
 import io from "socket.io-client";
@@ -158,12 +159,26 @@ const SingleChat = ({fetchAgain,setFetchAgain}) => {
             />
            {!selectedchat.isGroupChat ? (
                 <>
-                {getSender(user,selectedchat.users)}
-                {/*<ProfileModal user = {getSenderDetails(user,selectedchat.users)}/>*/}
+                  <Avatar
+                  mt="7px"
+                  mr={1}
+                  size="lg"
+                  cursor="pointer"
+                  src = { getSenderPic(user, selectedchat.users)}
+                  >
+                  </Avatar>
+                   {getSender(user,selectedchat.users)}
                 </>
            ):(
             <>
-
+            <Avatar
+              mt="7px"
+              mr={1}
+              size="lg"
+              cursor="pointer"
+              src = {"https://cdn2.iconfinder.com/data/icons/outline-basic-ui-set/139/Profile_GroupFriend-Outline-512.png"}
+              >
+              </Avatar>
             {selectedchat.chatName.toUpperCase()}
            
             </>

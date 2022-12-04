@@ -3,11 +3,12 @@ import { Box, Stack, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getSender } from "../config/ChatLogics";
+import { getSender,getSenderPic } from "../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./Misscellaneous/GroupChatModal";
-import { Button } from "@chakra-ui/react";
+import { Avatar, Button } from "@chakra-ui/react";
 import { ChatState } from "../Context/chatProvider";
+import { Wrap, WrapItem } from "@chakra-ui/layout";
 
 const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
@@ -110,11 +111,28 @@ const MyChats = ({ fetchAgain }) => {
                 borderRadius="lg"
                 key={chat._id}
               >
-                <Text>
+              <Wrap>
+              <WrapItem>
+              <Avatar
+              mt="7px"
+              mr={1}
+              size="md"
+              cursor="pointer"
+              src = {!chat.isGroupChat
+                ? getSenderPic(loggedUser, chat.users)
+                : "https://cdn2.iconfinder.com/data/icons/outline-basic-ui-set/139/Profile_GroupFriend-Outline-512.png"}
+              >
+              </Avatar>
+              </WrapItem>
+              <WrapItem>
+                <Text
+                paddingTop={'15px'}
+                fontSize='lg'>
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
                     : chat.chatName}
                 </Text>
+                </WrapItem>
                 {/*{chat.latestMessage && (
                   <Text fontSize="xs">
                     <b>{chat.latestMessage.sender.name} : </b>
@@ -123,6 +141,7 @@ const MyChats = ({ fetchAgain }) => {
                       : chat.latestMessage.content}
                   </Text>
                     )}*/}
+                </Wrap>
               </Box>
             ))}
           </Stack>
